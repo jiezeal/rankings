@@ -28,6 +28,13 @@ class User extends Authenticatable
     ];
 
     /**
+     * @param $password
+     */
+    public function setPasswordAttribute($password){
+        $this->attributes['password'] = \Hash::make($password);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function discussions(){
@@ -35,9 +42,9 @@ class User extends Authenticatable
     }
 
     /**
-     * @param $password
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function setPasswordAttribute($password){
-        $this->attributes['password'] = \Hash::make($password);
+    public function rankings(){
+        return $this->hasMany(Ranking::class);
     }
 }

@@ -12,8 +12,15 @@
 */
 
 Route::group(['prefix' => 'web', 'namespace' => 'Web'], function(){
+    // 帖子
     Route::resource('/index', 'DiscussionController');
     Route::resource('/test', 'DiscussionController@test');
+
+    // 点赞
+    Route::resource('/ranking', 'RankingController');
+    Route::resource('/ranking_list', 'RankingController@rankingList');
+
+    // 用户
     Route::resource('/user', 'UserController');
     Route::resource('/login_interface', 'UserController@loginInterface');
     Route::resource('/login', 'UserController@login');

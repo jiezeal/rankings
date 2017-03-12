@@ -20,6 +20,7 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="{{ Request::getPathInfo() == '/web/index' ? 'active' : '' }}"><a href="/web/index">首页</a></li>
+                    <li class="{{ Request::getPathInfo() == '/web/ranking_list' ? 'active' : '' }}"><a href="/web/ranking_list">点赞排行</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if(Auth::check())
@@ -43,7 +44,15 @@
             </div>
         </div>
     </div>
-    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/jquery/1.11.0-rc1/jquery.min.js"></script>
+    <script src="/lib/layer/layer.js"></script>
+    <script>
+        $(function(){
+            $.ajaxSetup({
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+            });
+        });
+    </script>
     @yield('script')
 </body>
 </html>

@@ -8,7 +8,7 @@
     <div class="container forum-index">
         <div class="row">
             <div class="col-md-9" role="main">
-                @foreach($discussions as $discussion)
+                @forelse($discussions as $discussion)
                     <div class="media">
                     <div class="media-left">
                     <a href="#">
@@ -18,15 +18,19 @@
                     <div class="media-body">
                     <h4 class="media-heading">
                         <a href="/web/index/{{ $discussion->id }}">{{ $discussion->title }}</a>
-                        <small class="pull-right">
-                            <i class="fa fa-heart-o rankings-btn"></i>
-                            <a href="#" class="rankings"> 点赞排行</a>
-                        </small>
+                        @inject('discussionPresenter', 'App\Presenters\DiscussionPresenter')
+                        @if(Auth::user())
+                            <small class="pull-right">
+                                <i class="fa {{ $discussionPresenter->is_ranking($discussion->rankings, Auth::user()->id) ? 'fa-heart' : 'fa-heart-o' }} rankings-btn" data-uid='{{ Auth::user()->id }}' data-did="{{ $discussion->id }}"></i>
+                            </small>
+                        @endif
                     </h4>
                     {{ $discussion->user->name }}
                     </div>
                     </div>
-                @endforeach
+                @empty
+                    暂无数据
+                @endforelse
             </div>
         </div>
     </div>

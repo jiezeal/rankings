@@ -23,9 +23,22 @@ elixir((mix) => {
         .sass('web/user/register.scss', 'resources/assets/css/web/user/register.css')
         .sass('web/user/login.scss', 'resources/assets/css/web/user/login.css')
         .sass('web/forum/show.scss', 'resources/assets/css/web/forum/show.css')
-        .sass('web/forum/create.scss', 'resources/assets/css/web/forum/create.css');
+        .sass('web/forum/create.scss', 'resources/assets/css/web/forum/create.css')
+        .sass('web/ranking/show.scss', 'resources/assets/css/web/ranking/show.css')
+        .sass('web/ranking/rankinglist.scss', 'resources/assets/css/web/ranking/rankinglist.css');
 
-    mix.styles(['app.css', 'common.css', 'font-awesome.css', 'web/forum/index.css', 'web/forum/show.css', 'web/forum/create.css', 'web/user/register.css', 'web/user/login.css'], 'public/web/css/all.css');
+    mix.styles([
+        'app.css',
+        'common.css',
+        'font-awesome.css',
+        'web/forum/index.css',
+        'web/forum/show.css',
+        'web/forum/create.css',
+        'web/user/register.css',
+        'web/user/login.css',
+        'web/ranking/show.css',
+        'web/ranking/rankinglist.css',
+    ], 'public/web/css/all.css');
     
     // mix.version('css/all.css');
     
