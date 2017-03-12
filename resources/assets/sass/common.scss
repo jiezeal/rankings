@@ -1,0 +1,30 @@
+/*---------------------------------------------------------------------------------------
+common.scss 公共样式
+---------------------------------------------------------------------------------------*/
+
+// 全局
+.mt-15{
+  margin-top: 15px;
+}
+
+// 导航
+.navbar{
+  margin-bottom: 0;
+}
+
+// 错误提示
+.list-group-item-danger{
+  margin-bottom: 10px !important;
+}
+
+// 头像
+.avatar{
+  width: 64px;
+}
+
+// 页脚
+.footer{
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+}

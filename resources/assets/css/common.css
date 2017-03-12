@@ -1,0 +1,25 @@
+@charset "UTF-8";
+/*---------------------------------------------------------------------------------------
+common.scss 公共样式
+---------------------------------------------------------------------------------------*/
+.mt-15 {
+  margin-top: 15px;
+}
+
+.navbar {
+  margin-bottom: 0;
+}
+
+.list-group-item-danger {
+  margin-bottom: 10px !important;
+}
+
+.avatar {
+  width: 64px;
+}
+
+.footer {
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+}
