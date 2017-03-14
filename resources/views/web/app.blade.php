@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Laravel App</title>
-    <link rel="stylesheet" href="{{ asset('web/css/all.css') }}">
+    {{--<link rel="stylesheet" href="{{ asset('web/css/all.css') }}">--}}
+    <link rel="stylesheet" href="{{ elixir('web/css/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('web/css/font-awesome.css') }}">
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top navbar-index">
@@ -45,7 +47,7 @@
         </div>
     </div>
     <script src="http://cdn.bootcss.com/jquery/1.11.0-rc1/jquery.min.js"></script>
-    <script src="/lib/layer/layer.js"></script>
+    <script src="{{ asset('lib/layer/layer.js') }}"></script>
     <script>
         $(function(){
             $.ajaxSetup({

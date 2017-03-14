@@ -18,7 +18,7 @@ elixir.config.sourcemaps = false;
 elixir((mix) => {
     mix.sass('app.scss', 'resources/assets/css/app.css')
         .sass('common.scss', 'resources/assets/css/common.css')
-        .sass('font-awesome.scss', 'resources/assets/css/font-awesome.css')
+        .sass('font-awesome.scss', 'public/web/css/font-awesome.css')
         .sass('web/forum/index.scss', 'resources/assets/css/web/forum/index.css')
         .sass('web/user/register.scss', 'resources/assets/css/web/user/register.css')
         .sass('web/user/login.scss', 'resources/assets/css/web/user/login.css')
@@ -30,7 +30,6 @@ elixir((mix) => {
     mix.styles([
         'app.css',
         'common.css',
-        'font-awesome.css',
         'web/forum/index.css',
         'web/forum/show.css',
         'web/forum/create.css',
@@ -39,8 +38,8 @@ elixir((mix) => {
         'web/ranking/show.css',
         'web/ranking/rankinglist.css',
     ], 'public/web/css/all.css');
-    
-    // mix.version('css/all.css');
+
+    mix.version('web/css/all.css');
     
     // mix.browserSync();
 

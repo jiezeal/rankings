@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Discussion;
 use App\Http\Requests\PublishDiscussionRequest;
+use App\Redis\MasterCache;
 use App\Services\DiscussionService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,14 +15,16 @@ class DiscussionController extends Controller
      * @var DiscussionService
      */
     protected $discussionService;
+    protected $masterCache;
 
     /**
      * DiscussionController constructor.
      * @param DiscussionService $discussionService
      */
-    public function __construct(DiscussionService $discussionService)
+    public function __construct(DiscussionService $discussionService, MasterCache $masterCache)
     {
         $this->discussionService = $discussionService;
+        $this->masterCache = $masterCache;
         $this->middleware('auth', ['only' => ['create', 'store', 'edit', 'update']]);
     }
 
@@ -96,12 +99,5 @@ class DiscussionController extends Controller
         }else{
             return redirect('/web/index/'.$discussion->id.'/edit');
         }
-    }
-
-    public function test(){
-        \Redis::zadd('key1', 1, 'php');
-        \Redis::zadd('key1', 2, 'java');
-        \Redis::zadd('key1', 3, 'net');
-        \Redis::zadd('key1', 4, 'ruby');
     }
 }
