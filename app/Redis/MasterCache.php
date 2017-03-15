@@ -7,17 +7,17 @@ class MasterCache extends Mredis
     /**
      * 获取redis缓存里某一个list中的指定页的所有元素
      * @param $key
-     * @param $list  每页显示的记录条数
+     * @param $pagelist  每页显示的记录条数
      * @param $page  当前页
      * @return array|bool
      */
-    public function getPageLists($key, $list, $page)
+    public function getPageLists($key, $pagenum, $page)
     {
-        if(empty($key) || !is_numeric($list) || !is_numeric($page)) return false;
+        if(empty($key) || !is_numeric($pagenum) || !is_numeric($page)) return false;
         // 起始偏移量
-        $start = $list * ($page - 1);
+        $start = $pagenum * ($page - 1);
         // 结束位置
-        $end = $start + $list - 1;
+        $end = $start + $pagenum - 1;
         return $this->lrange($key, $start, $end);
     }
 

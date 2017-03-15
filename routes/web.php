@@ -14,7 +14,6 @@
 Route::group(['prefix' => 'web', 'namespace' => 'Web'], function(){
     // 帖子
     Route::resource('/index', 'DiscussionController');
-    Route::resource('/test', 'DiscussionController@test');
 
     // 点赞
     Route::resource('/ranking', 'RankingController');

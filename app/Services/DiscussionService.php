@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Discussion;
-use App\User;
+use App\Redis\DiscussionCache;
 
 class DiscussionService
 {
@@ -13,12 +13,18 @@ class DiscussionService
     protected $discussion;
 
     /**
+     * @var
+     */
+    protected $discussionCache;
+
+    /**
      * DiscussionService constructor.
      * @param Discussion $discussion
      */
-    public function __construct(Discussion $discussion)
+    public function __construct(Discussion $discussion, DiscussionCache $discussionCache)
     {
         $this->discussion = $discussion;
+        $this->discussionCache = $discussionCache;
     }
 
     /**
@@ -30,12 +36,21 @@ class DiscussionService
     }
 
     /**
+     * 获取带有分页的记录
+     * @param $pagenum
+     * @return mixed
+     */
+    public function paginate($pagenum){
+        return $this->discussionCache->paginate($pagenum);
+    }
+    
+    /**
      * 获取一条记录
      * @param $id
      * @return mixed
      */
     public function getRaw($id){
-        return $this->discussion::findOrFail($id);
+        return $this->discussionCache->getRaw($id);
     }
 
     /**

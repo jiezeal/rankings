@@ -249,7 +249,7 @@ class Mredis{
      */
     public function hmset($key, $param)
     {
-        if(empty($key) || empty($param) || !is_array($param)) return false;
+        if(empty($key)) return false;
         return \Redis::hmset($key, $param);
     }
 

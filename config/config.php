@@ -7,5 +7,7 @@
  * @author: zhulinjie
  */
 
-define('HASH_OVERTIME', 60);
+define('HASH_OVERTIME', 86400);
 define('STRING_OVERTIME', 10);
+define('STRING_DISCUSSION_OVERTIME', 20);
+define('PAGENUM', 10);

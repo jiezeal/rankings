@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Discussion;
 use App\Http\Requests\PublishDiscussionRequest;
-use App\Redis\MasterCache;
 use App\Services\DiscussionService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -15,25 +13,23 @@ class DiscussionController extends Controller
      * @var DiscussionService
      */
     protected $discussionService;
-    protected $masterCache;
 
     /**
      * DiscussionController constructor.
      * @param DiscussionService $discussionService
      */
-    public function __construct(DiscussionService $discussionService, MasterCache $masterCache)
+    public function __construct(DiscussionService $discussionService)
     {
         $this->discussionService = $discussionService;
-        $this->masterCache = $masterCache;
         $this->middleware('auth', ['only' => ['create', 'store', 'edit', 'update']]);
     }
-
+    
     /**
      * 首页
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(){
-        $discussions = $this->discussionService->getAll();
+        $discussions = $this->discussionService->paginate(PAGENUM);
         return view('web.forum.index', compact('discussions'));
     }
     

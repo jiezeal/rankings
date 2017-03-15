@@ -31,6 +31,10 @@
                 @empty
                     暂无数据
                 @endforelse
+
+                <div class="page pull-right">
+                    {{ $discussions->render() }}
+                </div>
             </div>
         </div>
     </div>
