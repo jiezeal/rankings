@@ -24,6 +24,11 @@ class DiscussionCache extends MasterCache
     /**
      * @var
      */
+    private $uri;
+
+    /**
+     * @var
+     */
     protected $discussion;
 
     /**
@@ -33,6 +38,24 @@ class DiscussionCache extends MasterCache
     public function __construct(Discussion $discussion)
     {
         $this->discussion = $discussion;
+        $this->uri = Request()->root() . Request()->getRequestUri();
+    }
+
+    /**
+     * 获取所有记录
+     * @return bool|mixed|string
+     */
+    public function getAll(){
+        if(!$this->exists($this->skey . $this->uri)){
+            $discussions = $this->discussion::latest()->get();
+            $result = $this->addString($this->skey . $this->uri, serialize($discussions), STRING_DISCUSSION_OVERTIME);
+            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $this->uri);
+            return $discussions;
+        }else{
+            $discussions = $this->get($this->skey . $this->uri);
+            if(!$discussions) return false;
+            return unserialize($discussions);
+        }
     }
 
     /**
@@ -41,14 +64,13 @@ class DiscussionCache extends MasterCache
      * @return bool|mixed|string
      */
     public function paginate($pagenum){
-        $uri = Request()->root() . Request()->getRequestUri();
-        if(!$this->exists($this->skey . $uri)){
+        if(!$this->exists($this->skey . $this->uri)){
             $discussions = $this->discussion::latest()->paginate($pagenum);
-            $result = $this->addString($this->skey . $uri, serialize($discussions), STRING_DISCUSSION_OVERTIME);
-            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $uri);
+            $result = $this->addString($this->skey . $this->uri, serialize($discussions), STRING_DISCUSSION_OVERTIME);
+            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $this->uri);
             return $discussions;
         }else{
-            $discussions = $this->get($this->skey . $uri);
+            $discussions = $this->get($this->skey . $this->uri);
             if(!$discussions) return false;
             return unserialize($discussions);
         }
@@ -60,14 +82,13 @@ class DiscussionCache extends MasterCache
      * @return bool|mixed|string
      */
     public function getRaw($id){
-        $uri = Request()->root() . Request()->getRequestUri();
-        if(!$this->exists($this->skey . $uri)){
+        if(!$this->exists($this->skey . $this->uri)){
             $discussion = $this->discussion::find($id);
-            $result = $this->addString($this->skey . $uri, serialize($discussion), STRING_DISCUSSION_OVERTIME);
-            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $uri);
+            $result = $this->addString($this->skey . $this->uri, serialize($discussion), STRING_DISCUSSION_OVERTIME);
+            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $this->uri);
             return $discussion;
         }else{
-            $discussion = $this->get($this->skey . $uri);
+            $discussion = $this->get($this->skey . $this->uri);
             if(!$discussion) return false;
             return unserialize($discussion);
         }

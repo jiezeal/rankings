@@ -32,7 +32,7 @@ class DiscussionService
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getAll(){
-        return $this->discussion::latest()->get();
+        return $this->discussionCache->getAll();
     }
 
     /**
@@ -43,7 +43,7 @@ class DiscussionService
     public function paginate($pagenum){
         return $this->discussionCache->paginate($pagenum);
     }
-    
+
     /**
      * 获取一条记录
      * @param $id
