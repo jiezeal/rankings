@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Ranking;
 use App\Services\DiscussionService;
 use App\Services\RankingService;
 use Illuminate\Http\Request;
@@ -14,18 +15,21 @@ class RankingController extends Controller
      */
     protected $rankingService;
     protected $discussionService;
+    protected $ranking;
 
     /**
      * RankingController constructor.
      * @param RankingService $rankingService
      */
-    public function __construct(RankingService $rankingService, DiscussionService $discussionService)
+    public function __construct(RankingService $rankingService, DiscussionService $discussionService, Ranking $ranking)
     {
         $this->rankingService = $rankingService;
         $this->discussionService = $discussionService;
+        $this->ranking = $ranking;
     }
 
     /**
+     * 点赞操作
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -54,7 +58,7 @@ class RankingController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function rankingList(){
-        $discussions = $this->discussionService->getAll();
-        return view('web.ranking.rankinglist', compact('discussions'));
+        $rankings = $this->rankingService->paginate(5);
+        return view('web.ranking.rankinglist', compact('rankings'));
     }
 }

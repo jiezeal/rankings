@@ -45,5 +45,6 @@ $factory->define(App\Ranking::class, function (Faker\Generator $faker) {
     return [
         'user_id' => $faker->randomElement($user_ids),
         'discussion_id' => $faker->randomElement($discussion_ids),
+        'is_ranked' => random_int(0, 1),
     ];
 });

@@ -8,30 +8,31 @@
     <div class="container ranking-rankinglist">
         <div class="row">
             <div class="col-md-9" role="main">
-                @inject('rankingPresenter', 'App\Presenters\RankingPresenter')
-                @forelse($rankingPresenter->rankingSort($discussions) as $key => $value)
-                    @foreach($value as $v)
-                        <div class="media">
-                            <div class="media-left">
-                                <a href="#">
-                                    <img class="media-object img-circle avatar" src="{{ $v->user->avatar }}" alt="">
-                                </a>
-                            </div>
-                            <div class="media-body">
-                                <h4 class="media-heading">
-                                    <a href="/web/index/{{ $v->id }}">{{ $v->title }}</a>
-                                    <small class="pull-right">
-                                        <i class="fa fa-heart rankings-btn"></i>
-                                        <a href="/web/ranking/{{ $v->id }}" class="rankings"><span class="ranking-count">{{ $key }}</span>次</a>
-                                    </small>
-                                </h4>
-                                {{ $v->user->name }}
-                            </div>
+                @forelse($rankings as $key => $ranking)
+                    <div class="media">
+                        <div class="media-left">
+                            <a href="#">
+                                <img class="media-object img-circle avatar" src="{{ $ranking->discussion->user->avatar }}" alt="">
+                            </a>
                         </div>
-                    @endforeach
+                        <div class="media-body">
+                            <h4 class="media-heading">
+                                <a href="/web/index/{{ $ranking->discussion_id }}">{{ $ranking->discussion->title }}</a>
+                                <small class="pull-right">
+                                    <i class="fa fa-heart rankings-btn"></i>
+                                    <a href="/web/ranking/{{ $ranking->discussion_id }}" class="rankings"><span class="ranking-count">{{ $ranking->count }}</span>次</a>
+                                </small>
+                            </h4>
+                            {{ $ranking->discussion->user->name }}
+                        </div>
+                    </div>
                 @empty
                     暂无数据
                 @endforelse
+
+                <div class="page pull-right mt-30">
+                    {{ $rankings->render() }}
+                </div>
             </div>
         </div>
     </div>

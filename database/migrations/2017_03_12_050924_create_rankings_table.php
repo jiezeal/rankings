@@ -17,6 +17,7 @@ class CreateRankingsTable extends Migration
             $table->increments('id')->comment('点击排行榜 ID编号');
             $table->integer('user_id')->unsigned()->comment('用户ID');
             $table->integer('discussion_id')->unsigned()->comment('帖子ID');
+            $table->tinyInteger('is_ranked')->unsigned()->default(0)->comment('是否被点赞 0 未点赞 1 已经点赞');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('discussion_id')->references('id')->on('discussions')->onDelete('cascade');
             $table->timestamps();

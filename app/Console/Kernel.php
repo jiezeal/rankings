@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')->everyMinute()->timezone('Asia/Shanghai');
-//        $schedule->command('command:Discussion')->everyMinute()->timezone('Asia/Shanghai');
+//        $schedule->command('inspire')->everyMinute();
+//        $schedule->command('command:Discussion')->everyMinute();
     }
 
     /**

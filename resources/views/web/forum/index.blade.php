@@ -32,7 +32,7 @@
                     暂无数据
                 @endforelse
 
-                <div class="page pull-right">
+                <div class="page pull-right mt-30">
                     {{ $discussions->render() }}
                 </div>
             </div>

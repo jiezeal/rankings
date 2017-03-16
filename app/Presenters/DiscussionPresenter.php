@@ -12,7 +12,7 @@ class DiscussionPresenter
      */
     public function is_ranking($rankings, $user_id){
         foreach($rankings as $ranking){
-            if($ranking->user_id == $user_id){
+            if($ranking->is_ranked && $ranking->user_id == $user_id){
                 return true;
             }
         }
