@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\Discussion::class,
+        \App\Console\Commands\Recovery::class,
     ];
 
     /**
@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->command('inspire')->everyMinute();
-//        $schedule->command('command:Discussion')->everyMinute();
+        $schedule->command('recovery')->everyMinute();
+        $schedule->command('inspire')->everyMinute();
     }
 
     /**

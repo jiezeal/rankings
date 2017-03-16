@@ -8,24 +8,24 @@
     <div class="container forum-index">
         <div class="row">
             <div class="col-md-9" role="main">
+                @inject('discussionPresenter', 'App\Presenters\DiscussionPresenter')
                 @forelse($discussions as $discussion)
                     <div class="media">
                     <div class="media-left">
                     <a href="#">
-                      <img class="media-object img-circle avatar" src="{{ $discussion->user->avatar }}" alt="">
+                      <img class="media-object img-circle avatar" src="{{ $discussionPresenter->user($discussion)->avatar }}" alt="">
                     </a>
                     </div>
                     <div class="media-body">
                     <h4 class="media-heading">
                         <a href="/web/index/{{ $discussion->id }}">{{ $discussion->title }}</a>
-                        @inject('discussionPresenter', 'App\Presenters\DiscussionPresenter')
-                        @if(Auth::user())
+                        @if(Session::get('user_info'))
                             <small class="pull-right">
-                                <i class="fa {{ $discussionPresenter->is_ranking($discussion->rankings, Auth::user()->id) ? 'fa-heart' : 'fa-heart-o' }} rankings-btn" data-uid='{{ Auth::user()->id }}' data-did="{{ $discussion->id }}"></i>
+                                <i class="fa {{ $discussionPresenter->is_ranking($discussion->rankings, Session::get('user_info')->id) ? 'fa-heart' : 'fa-heart-o' }} rankings-btn" data-uid='{{ Auth::user()->id }}' data-did="{{ $discussion->id }}"></i>
                             </small>
                         @endif
                     </h4>
-                    {{ $discussion->user->name }}
+                    {{ $discussionPresenter->user($discussion)->name }}
                     </div>
                     </div>
                 @empty

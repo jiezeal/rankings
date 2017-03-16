@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Redis\UserCache;
 use App\User;
 
 class UserService
@@ -10,16 +11,28 @@ class UserService
      * @var User
      */
     protected $user;
+
+    /**
+     * @var EmailService
+     */
     protected $emailService;
+
+    /**
+     * @var
+     */
+    protected $userCache;
 
     /**
      * UserService constructor.
      * @param User $user
+     * @param EmailService $emailService
+     * @param MasterCache $masterCache
      */
-    public function __construct(User $user, EmailService $emailService)
+    public function __construct(User $user, EmailService $emailService, UserCache $userCache)
     {
         $this->user = $user;
         $this->emailService = $emailService;
+        $this->userCache = $userCache;
     }
 
     /**
@@ -28,8 +41,11 @@ class UserService
      * @return bool
      */
     public function register($data){
+        // 写入数据库
         $user = $this->user::create($data);
         if(!$user) return false;
+        // 写入缓存
+        $this->userCache->register($user);
         // 邮件发送
         $subject = 'Confirm Your Email';
         $view = 'email.register';
@@ -47,12 +63,14 @@ class UserService
         if(is_null($user)){
             return false;
         }
+
         $user->is_confirmed = 1;
         $user->confirm_code = str_random(48);
-        if($user->save()){
-            return true;
-        }else{
-            return false;
-        }
+        if(!$user->save()) return false;
+
+        // 更新缓存
+        $this->userCache->set(STRING_USER_ . $user->id, serialize($user));
+
+        return true;
     }
 }

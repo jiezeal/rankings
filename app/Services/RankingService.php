@@ -36,7 +36,7 @@ class RankingService
     public function paginate($pagenum){
         return $this->ranking::select('discussion_id', \DB::raw('count("user_id") as count'))->where('is_ranked', '1')->groupBy('discussion_id')->orderBy('count', 'desc')->paginate(5);
     }
-
+    
     /**
      * 点赞操作
      * @param $data

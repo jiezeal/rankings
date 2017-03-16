@@ -28,7 +28,7 @@ class DiscussionController extends Controller
      * 首页
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(){
+    public function index(Request $request){
         $discussions = $this->discussionService->paginate(PAGENUM);
         return view('web.forum.index', compact('discussions'));
     }

@@ -14,6 +14,5 @@ use Illuminate\Foundation\Inspiring;
 */
 
 Artisan::command('inspire', function () {
-    \Log::info('222222222');
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');

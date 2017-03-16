@@ -2,110 +2,47 @@
 
 namespace App\Redis;
 
-use App\Discussion;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DiscussionCache extends MasterCache
 {
-    /**
-     * @var string
-     */
-    protected $skey = STRING_DISCUSSION_INFO_;
-
-    /**
-     * @var string
-     */
-    protected $lkey = LIST_DISCUSSION_INFO_;
-
-    /**
-     * @var string
-     */
-    protected $hkey = HASH_DISCUSSION_INFO_;
-
-    /**
-     * @var
-     */
-    private $uri;
-
-    /**
-     * @var
-     */
-    protected $discussion;
-
-    /**
-     * DiscussionCache constructor.
-     * @param Discussion $discussion
-     */
-    public function __construct(Discussion $discussion)
-    {
-        $this->discussion = $discussion;
-        $this->uri = Request()->root() . Request()->getRequestUri();
-    }
-
-    /**
-     * 获取所有记录
-     * @return bool|mixed|string
-     */
-    public function getAll(){
-        if(!$this->exists($this->skey . $this->uri)){
-            $discussions = $this->discussion::latest()->get();
-            $result = $this->addString($this->skey . $this->uri, serialize($discussions), STRING_DISCUSSION_OVERTIME);
-            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $this->uri);
-            return $discussions;
-        }else{
-            $discussions = $this->get($this->skey . $this->uri);
-            if(!$discussions) return false;
-            return unserialize($discussions);
-        }
-    }
-
     /**
      * 获取带有分页的记录
      * @param $pagenum  每页显示的记录数
      * @return bool|mixed|string
      */
     public function paginate($pagenum){
-        if(!$this->exists($this->skey . $this->uri)){
-            $discussions = $this->discussion::latest()->paginate($pagenum);
-            $result = $this->addString($this->skey . $this->uri, serialize($discussions), STRING_DISCUSSION_OVERTIME);
-            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $this->uri);
-            return $discussions;
-        }else{
-            $discussions = $this->get($this->skey . $this->uri);
-            if(!$discussions) return false;
-            return unserialize($discussions);
+        $data = Request()->all();
+        if(!isset($data['page']) && empty($data['page'])) $data['page'] = 1;
+
+        // 获取帖子总记录数
+        $total = $this->llen(LIST_DISCUSSION);
+
+        $ids = $this->getPageLists(LIST_DISCUSSION, PAGENUM, $data['page']);
+
+        $lists = [];
+        foreach($ids as $id){
+            $lists[] = unserialize($this->get(STRING_DISCUSSION_ . $id));
         }
+
+        // 手动创建分页
+        $discussions = new LengthAwarePaginator($lists, $total, PAGENUM);
+        $discussions->setPath('index');
+
+        return $discussions;
     }
 
     /**
-     * 获取一条数据
-     * @param $id
-     * @return bool|mixed|string
+     * 将新增的帖子写入到缓存中
+     * @param $discussion
      */
-    public function getRaw($id){
-        if(!$this->exists($this->skey . $this->uri)){
-            $discussion = $this->discussion::find($id);
-            $result = $this->addString($this->skey . $this->uri, serialize($discussion), STRING_DISCUSSION_OVERTIME);
-            if(!$result) \Log::info('Redis添加失败：' . $this->skey . $this->uri);
-            return $discussion;
-        }else{
-            $discussion = $this->get($this->skey . $this->uri);
-            if(!$discussion) return false;
-            return unserialize($discussion);
-        }
+    public function publish($discussion){
+        // 将新增的帖子加入到string缓存中
+        $res = $this->set(STRING_DISCUSSION_ . $discussion->id, serialize($discussion));
+        if(!$res) \Log('将ID为[' . $discussion->id . ']的帖子写入到string缓存失败');
+
+        // 同时将新增的帖子ID写入到list列表缓存中
+        $res = $this->lpush(LIST_DISCUSSION, $discussion->id);
+        if(!$res) \Log('帖子ID[' . $discussion->id . ']写入到list列表缓存失败');
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

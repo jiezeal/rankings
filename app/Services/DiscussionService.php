@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Discussion;
 use App\Redis\DiscussionCache;
+use Illuminate\Http\Request;
 
 class DiscussionService
 {
@@ -28,20 +29,18 @@ class DiscussionService
     }
 
     /**
-     * 获取所有记录
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
-     */
-    public function getAll(){
-        return $this->discussionCache->getAll();
-    }
-
-    /**
      * 获取带有分页的记录
      * @param $pagenum
      * @return mixed
      */
     public function paginate($pagenum){
-        return $this->discussionCache->paginate($pagenum);
+        // 判断缓存中是否存在，如果存在从缓存中获取数据
+        if($this->discussionCache->exists(LIST_DISCUSSION)){
+            return $this->discussionCache->paginate($pagenum);
+        // 缓存不存在，则从数据库中获取
+        }else{
+            return $this->discussion::latest()->paginate($pagenum);
+        }
     }
 
     /**
@@ -50,7 +49,12 @@ class DiscussionService
      * @return mixed
      */
     public function getRaw($id){
-        return $this->discussionCache->getRaw($id);
+        // 判断帖子在缓存中是否存在
+        if($this->discussionCache->exists(STRING_DISCUSSION_ . $id)){
+            return unserialize($this->discussionCache->get(STRING_DISCUSSION_ . $id));
+        }
+        // 缓存不存在则从数据库中获取
+        return $this->discussion::find($id);
     }
 
     /**
@@ -58,11 +62,14 @@ class DiscussionService
      * @param $data
      * @return bool|static
      */
-    public function Publish($data){
+    public function publish($data){
+        // 加入到数据库
         $discussion = $this->discussion::create($data);
         if(!$discussion){
             return false;
         }
+        // 加入到缓存
+        $this->discussionCache->publish($discussion);
         return $discussion;
     }
 
@@ -73,13 +80,17 @@ class DiscussionService
      * @return bool
      */
     public function modify($data, $id){
-        $discussion = $this->discussion::findOrFail($id);
+        $discussion = $this->discussion::find($id);
         if(!$discussion){
             return false;
         }
-        if(!$discussion->update($data)){
+        // 修改操作
+        $result = $discussion->update($data);
+        if(!$result){
             return false;
         }
+        // 更新缓存
+        $this->discussionCache->set(STRING_DISCUSSION_ . $discussion->id, serialize($discussion));
         return $discussion;
     }
 }
