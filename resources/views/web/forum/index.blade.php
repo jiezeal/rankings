@@ -19,13 +19,13 @@
                     <div class="media-body">
                     <h4 class="media-heading">
                         <a href="/web/index/{{ $discussion->id }}">{{ $discussion->title }}</a>
-                        @if(Session::get('user_info'))
+                        @if(Auth::user())
                             <small class="pull-right">
-                                <i class="fa {{ $discussionPresenter->is_ranking($discussion->rankings, Session::get('user_info')->id) ? 'fa-heart' : 'fa-heart-o' }} rankings-btn" data-uid='{{ Auth::user()->id }}' data-did="{{ $discussion->id }}"></i>
+                                <i class="fa {{ $discussionPresenter->is_ranking($discussion, Auth::user()->id) ? 'fa-heart' : 'fa-heart-o' }} rankings-btn" data-uid='{{ Auth::user()->id }}' data-did="{{ $discussion->id }}"></i>
                             </small>
                         @endif
                     </h4>
-                    {{ $discussionPresenter->user($discussion)->name }}
+                        {{ $discussionPresenter->user($discussion)->name }}
                     </div>
                     </div>
                 @empty

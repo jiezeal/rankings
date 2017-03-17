@@ -85,7 +85,6 @@ class UserController extends Controller
             'password' => $request->get('password'),
             'is_confirmed' => 1
         ])){
-            Session::put('user_info', \Auth::user());
             return redirect('web/index');
         }
         Session::flash('user_login_failed', '密码不正确或邮箱未验证');
@@ -98,7 +97,6 @@ class UserController extends Controller
      */
     public function logout(){
         \Auth::logout();
-        Session::forget('user_info');
         return redirect('/web/index');
     }
 }

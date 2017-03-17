@@ -14,7 +14,7 @@ $(function(){
                 url: '/web/ranking',
                 data: {
                     user_id: $(this).data('uid'),
-                    discussion_id: $(this).data('did')
+                    discussion_id: $(this).data('did'),
                 },
                 dataType: 'json',
                 beforeSend: function (xhr) {
@@ -44,7 +44,7 @@ $(function(){
                 url: '/web/ranking',
                 data: {
                     user_id: $(this).data('uid'),
-                    discussion_id: $(this).data('did')
+                    discussion_id: $(this).data('did'),
                 },
                 dataType: 'json',
                 beforeSend: function (xhr) {

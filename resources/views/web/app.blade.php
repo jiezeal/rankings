@@ -25,7 +25,7 @@
                     <li class="{{ Request::getPathInfo() == '/web/ranking_list' ? 'active' : '' }}"><a href="/web/ranking_list">点赞排行</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    @if(Auth::check())
+                    @if(Auth::user())
                         <li><a href="#">{{ Auth::user()->name }}</a></li>
                         <li><a href="/web/logout">退出登录</a></li>
                     @else

@@ -9,7 +9,7 @@ class Ranking extends Model
     /**
      * @var array
      */
-    protected $fillable = ['user_id', 'discussion_id'];
+    protected $fillable = ['user_id', 'discussion_id', 'is_ranked'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

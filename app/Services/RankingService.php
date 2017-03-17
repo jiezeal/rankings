@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Ranking;
+use App\Redis\RankingCache;
 
 class RankingService
 {
@@ -12,12 +13,19 @@ class RankingService
     protected $ranking;
 
     /**
+     * @var
+     */
+    protected $rankingCache;
+
+    /**
      * RankingService constructor.
      * @param Ranking $ranking
+     * @param RankingCache $rankingCache
      */
-    public function __construct(Ranking $ranking)
+    public function __construct(Ranking $ranking, RankingCache $rankingCache)
     {
         $this->ranking = $ranking;
+        $this->rankingCache = $rankingCache;
     }
 
     /**
@@ -34,35 +42,53 @@ class RankingService
      * @return mixed
      */
     public function paginate($pagenum){
-        return $this->ranking::select('discussion_id', \DB::raw('count("user_id") as count'))->where('is_ranked', '1')->groupBy('discussion_id')->orderBy('count', 'desc')->paginate(5);
+        if($this->rankingCache->exists(ZADD_RANKING)){
+            return $this->rankingCache->paginate($pagenum);
+        }else{
+            $this->rankingCache->paginate($pagenum);
+            return $this->ranking::select('discussion_id', \DB::raw('count("user_id") as count'))->where('is_ranked', '1')->groupBy('discussion_id')->orderBy('count', 'desc')->paginate($pagenum);
+        }
     }
-    
+
     /**
      * 点赞操作
      * @param $data
      * @return bool|static
      */
     public function ranking($data){
-        $ranking = $this->ranking->where($data)->first();
+        $ranking = $this->ranking->where(['user_id' => $data['user_id'], 'discussion_id' => $data['discussion_id']])->first();
         if($ranking){
             // 取消点赞
             if($ranking->is_ranked){
                 $ranking->is_ranked = 0;
-                $result = $ranking->save();
-                if(!$result) return false;
+                if(!$ranking->save()) return false;
+                // 更新缓存
+                $zrank = $this->rankingCache->zrank(ZADD_RANKING, $ranking->discussion_id);
+                // 在缓存中存在才去执行
+                if($zrank){
+                    $this->rankingCache->srem(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
+                    $this->rankingCache->zincrby(ZADD_RANKING, -1, $ranking->discussion_id);
+                }
             // 重新点赞
             }else{
                 $ranking->is_ranked = 1;
-                $result = $ranking->save();
-                if(!$result) return false;
+                if(!$ranking->save()) return false;
+                // 更新缓存
+                $this->rankingCache->sadd(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
+                $this->rankingCache->zincrby(ZADD_RANKING, 1, $ranking->discussion_id);
             }
-            return $result;
+            return $ranking;
+        // 点赞操作
         }else{
-            $result = $this->ranking::create($data);
-            if(!$result){
+            $data['is_ranked'] = 1;
+            $ranking= $this->ranking::create($data);
+            if(!$ranking){
                 return false;
             }
-            return $result;
+            // 写入到缓存
+            $this->rankingCache->sadd(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
+            $this->rankingCache->zadd(ZADD_RANKING, [$ranking->discussion_id => 1]);
+            return $ranking;
         }
     }
 }

@@ -22,6 +22,22 @@ class MasterCache extends Mredis
     }
 
     /**
+     * 获取redis缓存里某一个有序体集合中的指定页的所有元素
+     * @param $key
+     * @param $pagenum
+     * @param $page
+     * @return array|bool
+     */
+    public function getPageZadds($key, $pagenum, $page){
+        if(empty($key) || !is_numeric($pagenum) || !is_numeric($page)) return false;
+        // 起始偏移量
+        $start = $pagenum * ($page - 1);
+        // 结束位置
+        $end = $start + $pagenum - 1;
+        return $this->zrevrange($key, $start, $end, 'WITHSCORES');
+    }
+
+    /**
      * 获取hash的全部字段数据
      * @param $key
      * @param int $time
