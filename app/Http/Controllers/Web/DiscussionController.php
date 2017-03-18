@@ -83,8 +83,8 @@ class DiscussionController extends Controller
 
     /**
      * 修改一篇帖子
-     * @param PublishDiscussionRequest $request
      * @param $id
+     * @param PublishDiscussionRequest $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(PublishDiscussionRequest $request, $id){

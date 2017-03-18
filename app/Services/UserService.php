@@ -63,7 +63,7 @@ class UserService
         if(is_null($user)){
             return false;
         }
-
+        
         $user->is_confirmed = 1;
         $user->confirm_code = str_random(48);
         if(!$user->save()) return false;

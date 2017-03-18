@@ -44,12 +44,10 @@ class DiscussionPresenter
     public function is_ranking($discussion, $user_id){
         $res = $this->masterCache->exists(SADD_DISCUSSION_ . $discussion->id);
         if($res){
-            // 获取被点赞的用户
             $uids = $this->masterCache->smembers(SADD_DISCUSSION_ . $discussion->id);
             if(in_array($user_id, $uids)) return true;
             return false;
         }else{
-            // 获取被点赞的用户
             $rankings = $discussion->rankings;
             foreach($rankings as $ranking){
                 if($ranking->is_ranked && $ranking->user_id == $user_id){

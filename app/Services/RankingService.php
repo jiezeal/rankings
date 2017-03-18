@@ -29,21 +29,15 @@ class RankingService
     }
 
     /**
-     * 获取所有点赞记录
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
-     */
-    public function getAll(){
-        return $this->ranking::latest()->get();
-    }
-
-    /**
      * 获取点赞排行 带分页
      * @param $pagenum  每页显示记录条数
      * @return mixed
      */
     public function paginate($pagenum){
+        // 从缓存获取数据
         if($this->rankingCache->exists(ZADD_RANKING)){
             return $this->rankingCache->paginate($pagenum);
+        // 从数据库中获取数据
         }else{
             $this->rankingCache->paginate($pagenum);
             return $this->ranking::select('discussion_id', \DB::raw('count("user_id") as count'))->where('is_ranked', '1')->groupBy('discussion_id')->orderBy('count', 'desc')->paginate($pagenum);
@@ -63,12 +57,8 @@ class RankingService
                 $ranking->is_ranked = 0;
                 if(!$ranking->save()) return false;
                 // 更新缓存
-                $zrank = $this->rankingCache->zrank(ZADD_RANKING, $ranking->discussion_id);
-                // 在缓存中存在才去执行
-                if($zrank){
-                    $this->rankingCache->srem(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
-                    $this->rankingCache->zincrby(ZADD_RANKING, -1, $ranking->discussion_id);
-                }
+                $this->rankingCache->srem(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
+                $this->rankingCache->zincrby(ZADD_RANKING, -1, $ranking->discussion_id);
             // 重新点赞
             }else{
                 $ranking->is_ranked = 1;
