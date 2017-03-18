@@ -50,7 +50,7 @@ class RankingService
      * @return bool|static
      */
     public function ranking($data){
-        $ranking = $this->ranking->where(['user_id' => $data['user_id'], 'discussion_id' => $data['discussion_id']])->first();
+        $ranking = $this->ranking->where($data)->first();
         if($ranking){
             // 取消点赞
             if($ranking->is_ranked){
@@ -76,8 +76,15 @@ class RankingService
                 return false;
             }
             // 写入到缓存
-            $this->rankingCache->sadd(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
-            $this->rankingCache->zadd(ZADD_RANKING, [$ranking->discussion_id => 1]);
+            if($this->rankingCache->exists(SADD_DISCUSSION_ . $ranking->discussion_id)){
+                // 如果帖子已经被赞过，则自增1
+                $this->rankingCache->sadd(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
+                $this->rankingCache->zincrby(ZADD_RANKING, 1, $ranking->discussion_id);
+            }else{
+                // 如果帖子还没有被赞过，则初始化为1
+                $this->rankingCache->sadd(SADD_DISCUSSION_ . $ranking->discussion_id, $ranking->user_id);
+                $this->rankingCache->zadd(ZADD_RANKING, [$ranking->discussion_id => 1]);
+            }
             return $ranking;
         }
     }
