@@ -53,7 +53,7 @@ class Recovery extends Command
         // 点赞排行榜
         $this->recoveryRanking();
     }
-
+    
     /**
      * 缓存用户
      */
