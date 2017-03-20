@@ -32,7 +32,7 @@ class UserController extends Controller
     public function create(){
         return view('web.user.register');
     }
-
+    
     /**
      * 用户注册
      * @param UserRegisterRequest $request

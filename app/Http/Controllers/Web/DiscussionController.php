@@ -75,7 +75,7 @@ class DiscussionController extends Controller
     public function edit($id){
         $discussion = $this->discussionService->getRaw($id);
         // 只能编辑自己发的帖子
-        if(\Auth::user()->id !== $discussion->user_id){
+        if(\Auth::user()->id != $discussion->user_id){
             return redirect('/web/index');
         }
         return view('web.forum.edit', compact('discussion'));

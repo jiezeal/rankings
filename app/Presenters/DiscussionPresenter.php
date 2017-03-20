@@ -28,7 +28,11 @@ class DiscussionPresenter
     public function user($discussion){
         // 判断用户信息在缓存中是否存在，如果存在则从缓存中获取用户信息
         if($this->masterCache->exists(STRING_USER_ . $discussion->user_id)){
-            return unserialize($this->masterCache->get(STRING_USER_ . $discussion->user_id));
+            // 从string缓存中获取
+//             return unserialize($this->masterCache->get(STRING_USER_ . $discussion->user_id));
+
+            // 从hash缓存中获取
+            return (object)$this->masterCache->hgetall(HASH_USER_ . $discussion->user_id);
         // 不存在缓存则从数据库中获取用户信息
         }else{
             return $discussion->user;

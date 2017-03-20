@@ -63,7 +63,11 @@ class Recovery extends Command
             // string缓存
             $result = $this->masterCache->set(STRING_USER_ . $user->id, serialize($user));
             if(!$result) \Log::info('ID为[' . $user->id . ']的用户信息写入string缓存失败');
-            
+
+            // hash缓存
+            $result = $this->masterCache->hmset(HASH_USER_ . $user->id, $user->toArray());
+            if(!$result) \Log::info('ID为[' . $user->id . ']的用户信息写入hash缓存失败');
+
             // list列表缓存
             $result = $this->masterCache->lpush(LIST_USER, $user->id);
             if(!$result) \Log::info('用户ID[' . $user->id . ']写入list列表缓存失败');
@@ -79,6 +83,10 @@ class Recovery extends Command
             // string缓存
             $result = $this->masterCache->set(STRING_DISCUSSION_ . $discussion->id, serialize($discussion));
             if(!$result) \Log::info('ID为[' . $discussion->id . ']的帖子写入string缓存失败');
+
+            // hash缓存
+            $result = $this->masterCache->hmset(HASH_DISCUSSION_ . $discussion->id, $discussion->toArray());
+            if(!$result) \Log::info('ID为[' . $discussion->id . ']的帖子写入hash缓存失败');
 
             // list列表缓存
             $result = $this->masterCache->lpush(LIST_DISCUSSION, $discussion->id);

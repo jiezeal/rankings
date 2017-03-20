@@ -51,7 +51,10 @@ class DiscussionService
     public function getRaw($id){
         // 判断帖子在缓存中是否存在
         if($this->discussionCache->exists(STRING_DISCUSSION_ . $id)){
-            return unserialize($this->discussionCache->get(STRING_DISCUSSION_ . $id));
+            // 从string缓存中获取
+//            return unserialize($this->discussionCache->get(STRING_DISCUSSION_ . $id));
+            // 从hash缓存中获取
+            return (object)$this->discussionCache->hgetall(HASH_DISCUSSION_ . $id);
         }
         // 缓存不存在则从数据库中获取
         return $this->discussion::find($id);
@@ -89,8 +92,10 @@ class DiscussionService
         if(!$result){
             return false;
         }
-        // 更新缓存
+        // 更新string缓存
         $this->discussionCache->set(STRING_DISCUSSION_ . $discussion->id, serialize($discussion));
+        // 更新hash缓存
+        $this->discussionCache->hmset(HASH_DISCUSSION_ . $discussion->id, $discussion->toArray());
         return $discussion;
     }
 }
