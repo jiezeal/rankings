@@ -111,12 +111,13 @@ class Recovery extends Command
         $discussions = $this->discussion::all();
         foreach($discussions as $discussion){
             $rankings = $discussion->rankings;
+            
+            // 如果缓存已经存在，则先删除缓存
+            if($this->masterCache->exists(SADD_DISCUSSION_ . $discussion->id)) $this->masterCache->del(SADD_DISCUSSION_ . $discussion->id);
+            if($this->masterCache->exists(ZADD_RANKING)) $this->masterCache->del(ZADD_RANKING);
+            
             foreach($rankings as $ranking){
                 if($ranking->is_ranked == 1){
-                    // 如果缓存已经存在，则先删除缓存
-                    if($this->masterCache->exists(SADD_DISCUSSION_ . $discussion->id)) $this->masterCache->del(SADD_DISCUSSION_ . $discussion->id);
-                    if($this->masterCache->exists(ZADD_RANKING)) $this->masterCache->del(ZADD_RANKING);
-
                     // 写入集合
                     $this->masterCache->sadd(SADD_DISCUSSION_ . $discussion->id, $ranking->user_id);
                     // 判断是否存在，如果不存在，则score为1。如果存在，则在它的基础上新增1

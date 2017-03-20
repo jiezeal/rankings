@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\Recovery::class,
+        \App\Console\Commands\ClearCache::class,
     ];
 
     /**
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('recovery')->everyMinute();
+        $schedule->command('clear')->everyMinute();
         $schedule->command('inspire')->everyMinute();
     }
 
