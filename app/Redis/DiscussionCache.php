@@ -19,8 +19,8 @@ class DiscussionCache extends MasterCache
         $total = $this->llen(LIST_DISCUSSION);
 
         $ids = $this->getPageLists(LIST_DISCUSSION, PAGENUM, $data['page']);
-
         $lists = [];
+        
         foreach($ids as $id){
             // 从string缓存中获取数据
 //            $lists[] = unserialize($this->get(STRING_DISCUSSION_ . $id));

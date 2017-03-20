@@ -59,11 +59,13 @@ class Recovery extends Command
      */
     public function recoveryUser(){
         $users = $this->user::all();
+
+        if($this->masterCache->exists(LIST_USER)) $this->masterCache->del(LIST_USER);
+
         foreach($users as $user){
             // 如果缓存已经存在，则先删除缓存
             if($this->masterCache->exists(STRING_USER_ . $user->id)) $this->masterCache->del(STRING_USER_ . $user->id);
             if($this->masterCache->exists(HASH_USER_ . $user->id)) $this->masterCache->del(HASH_USER_ . $user->id);
-            if($this->masterCache->exists(LIST_USER)) $this->masterCache->del(LIST_USER);
 
             // string缓存
             $result = $this->masterCache->set(STRING_USER_ . $user->id, serialize($user));
@@ -84,11 +86,13 @@ class Recovery extends Command
      */
     public function recoveryDiscussion(){
         $discussions = $this->discussion::all();
+
+        if($this->masterCache->exists(LIST_DISCUSSION)) $this->masterCache->del(LIST_DISCUSSION);
+
         foreach($discussions as $discussion){
             // 如果缓存已经存在，则先删除缓存
             if($this->masterCache->exists(STRING_DISCUSSION_ . $discussion->id)) $this->masterCache->del(STRING_DISCUSSION_ . $discussion->id);
             if($this->masterCache->exists(HASH_DISCUSSION_ . $discussion->id)) $this->masterCache->del(HASH_DISCUSSION_ . $discussion->id);
-            if($this->masterCache->exists(LIST_DISCUSSION)) $this->masterCache->del(LIST_DISCUSSION);
 
             // string缓存
             $result = $this->masterCache->set(STRING_DISCUSSION_ . $discussion->id, serialize($discussion));
@@ -109,13 +113,15 @@ class Recovery extends Command
      */
     public function recoveryRanking(){
         $discussions = $this->discussion::all();
+
+        if($this->masterCache->exists(ZADD_RANKING)) $this->masterCache->del(ZADD_RANKING);
+
         foreach($discussions as $discussion){
             $rankings = $discussion->rankings;
             
             // 如果缓存已经存在，则先删除缓存
             if($this->masterCache->exists(SADD_DISCUSSION_ . $discussion->id)) $this->masterCache->del(SADD_DISCUSSION_ . $discussion->id);
-            if($this->masterCache->exists(ZADD_RANKING)) $this->masterCache->del(ZADD_RANKING);
-            
+
             foreach($rankings as $ranking){
                 if($ranking->is_ranked == 1){
                     // 写入集合

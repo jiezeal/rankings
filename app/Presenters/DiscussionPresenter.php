@@ -46,11 +46,15 @@ class DiscussionPresenter
      * @return bool
      */
     public function is_ranking($discussion, $user_id){
-        $res = $this->masterCache->exists(SADD_DISCUSSION_ . $discussion->id);
-        if($res){
-            $uids = $this->masterCache->smembers(SADD_DISCUSSION_ . $discussion->id);
-            if(in_array($user_id, $uids)) return true;
-            return false;
+        if($this->masterCache->exists(ZADD_RANKING)){
+            $res = $this->masterCache->exists(SADD_DISCUSSION_ . $discussion->id);
+            if($res){
+                $uids = $this->masterCache->smembers(SADD_DISCUSSION_ . $discussion->id);
+                if(in_array($user_id, $uids)) return true;
+                return false;
+            }else{
+                return false;
+            }
         }else{
             $rankings = $discussion->rankings;
             foreach($rankings as $ranking){
