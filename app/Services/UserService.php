@@ -68,8 +68,10 @@ class UserService
         $user->confirm_code = str_random(48);
         if(!$user->save()) return false;
 
-        // 更新缓存
+        // 更新string缓存
         $this->userCache->set(STRING_USER_ . $user->id, serialize($user));
+        // 更新hash缓存
+        $this->userCache->hmget(HASH_USER_ . $user->id, $user->toArray());
 
         return true;
     }
