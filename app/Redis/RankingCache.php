@@ -21,7 +21,11 @@ class RankingCache extends MasterCache
         $ids = $this->getPageZadds(ZADD_RANKING, PAGENUM, $data['page']);
         $lists = [];
         foreach($ids as $id => $count){
-            $discussion = unserialize($this->get(STRING_DISCUSSION_ . $id));
+            // 从string缓存中获取一篇帖子记录
+//            $discussion = unserialize($this->get(STRING_DISCUSSION_ . $id));
+            
+            // 从hash缓存中获取一篇帖子记录
+            $discussion = (object)$this->hgetall(HASH_DISCUSSION_ . $id);
             $discussion->count = $count;
             $lists[] = $discussion;
         }

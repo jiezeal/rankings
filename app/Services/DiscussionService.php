@@ -53,6 +53,7 @@ class DiscussionService
         if($this->discussionCache->exists(STRING_DISCUSSION_ . $id)){
             // 从string缓存中获取
 //            return unserialize($this->discussionCache->get(STRING_DISCUSSION_ . $id));
+            
             // 从hash缓存中获取
             return (object)$this->discussionCache->hgetall(HASH_DISCUSSION_ . $id);
         }

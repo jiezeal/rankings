@@ -18,10 +18,10 @@
                         </div>
                         <div class="media-body">
                             <h4 class="media-heading">
-                                <a href="/web/index/{{ $ranking->discussion_id }}">{{ $rankingPresenter->discussion($ranking)->title }}</a>
+                                <a href="/web/index/{{ $rankingPresenter->discussion($ranking)->id }}">{{ $rankingPresenter->discussion($ranking)->title }}</a>
                                 <small class="pull-right">
                                     <i class="fa fa-heart rankings-btn"></i>
-                                    <a href="/web/ranking/{{ $ranking->discussion_id or $ranking->id }}" class="rankings"><span class="ranking-count">{{ $ranking->count }}</span>次</a>
+                                    <a href="/web/ranking/{{ $rankingPresenter->discussion($ranking)->id }}" class="rankings"><span class="ranking-count">{{ $ranking->count }}</span>次</a>
                                 </small>
                             </h4>
                             {{ $rankingPresenter->discussion($ranking)->name }}
